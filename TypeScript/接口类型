@@ -1,0 +1,157 @@
+##### 声明对象
+
+- 使用对象类型`type InfoType = {name: string, age: number}`
+
+- 使用接口类型(建议使用接口类型)
+
+  ```typescript
+  // 另外一种方式声明对象类型: 接口interface
+  // 在其中可以定义可选类型
+  // 也可以定义只读属性
+  interface IInfoType {
+    readonly name: string
+    age: number
+    friend?: {
+      name: string
+    }
+  }
+  ```
+
+##### 索引类型
+
+```typescript
+// 通过interface来定义索引类型
+interface IndexLanguage {
+  [index: number]: string
+}
+const frontLanguage: IndexLanguage = {
+  0: "HTML",
+  1: "CSS",
+  2: "JavaScript",
+  3: "Vue"
+}
+interface ILanguageYear {
+  [name: string]: number
+}
+const languageYear: ILanguageYear = {
+  "C": 1972,
+  "Java": 1995,
+  "JavaScript": 1996,
+  "TypeScript": 2014
+}
+```
+
+##### 函数类型
+
+```typescript
+// type CalcFn = (n1: number, n2: number) => number 这是类型别名定义
+// 用接口定义函数类型 左边是参数 右边是返回值
+interface CalcFn {
+  (n1: number, n2: number): number
+}
+function calc(num1: number, num2: number, calcFn: CalcFn) {
+  return calcFn(num1, num2)
+}
+const add: CalcFn = (num1, num2) => {
+  return num1 + num2
+}
+calc(20, 30, add)
+```
+
+##### 接口的继承
+
+```typescript
+// 接口可以多继承
+interface ISwim {
+  swimming: () => void
+}
+interface IFly {
+  flying: () => void
+}
+interface IAction extends ISwim, IFly {
+}
+const action: IAction = {
+  swimming() {
+  },
+  flying() {
+  }
+}
+```
+
+##### 交叉类型
+
+```typescript
+// 一种组合类型的方式: 联合类型
+type WhyType = number | string
+type Direction = "left" | "right" | "center"
+// 另一种组件类型的方式: 交叉类型
+type WType = number & string
+interface ISwim {
+  swimming: () => void
+}
+interface IFly {
+  flying: () => void
+}
+type MyType1 = ISwim | IFly
+type MyType2 = ISwim & IFly
+const obj1: MyType1 = {
+  flying() {
+  }
+}
+const obj2: MyType2 = {
+  swimming() {
+
+  },
+  flying() {
+    
+  }
+}
+```
+
+##### 接口的实现
+
+```typescript
+interface ISwim {
+  swimming: () => void;
+}
+interface IEat {
+  eating: () => void;
+}
+// 类实现接口
+class Animal {}
+// 继承: 只能实现单继承
+// 实现: 实现接口, 类可以实现多个接口，类本质上就是对象
+class Fish extends Animal implements ISwim, IEat {
+  swimming() {
+    console.log("Fish Swmming");
+  }
+  eating() {
+    console.log("Fish Eating");
+  }
+}
+class Person implements ISwim {
+  swimming() {
+    console.log("Person Swimming");
+  }
+}
+
+/**
+ * 编写一些公共的API: 面向接口编程
+ * 具体就是
+ * swimActionh函数，里面调用了swimming方法
+ * 当你swimable参数类型注解的时候是ISwim，就里面是包含swimming方法的
+ * 都可以传入，那么就限制了，也不会报错，这就是编写一些公共的API
+ * 
+ * @param swimable 
+ */
+function swimAction(swimable: ISwim) {
+  swimable.swimming();
+}
+
+// 1.所有实现了接口的类对应的对象, 都是可以传入
+swimAction(new Fish());
+swimAction(new Person());
+
+swimAction({ swimming: function () {} });
+```
+
